@@ -156,23 +156,29 @@ while (true) {
                 LED_status = 1 - LED_status
                 pins.digitalWritePin(LED_pin, LED_status)
                 basic.showIcon(IconNames.Angry)
-                maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Close)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Close)
+                maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 150)
                 break;
             case "MoveBackward": // request 192.168.x.x/Happy
                 GET_success = true
                 LED_status = 1 - LED_status
                 pins.digitalWritePin(LED_pin, LED_status)
                 basic.showIcon(IconNames.Surprised)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Close)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Close)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Backward, 100)
                 break;
             case "MoveLeft": // request 192.168.x.x/Happy
                 GET_success = true
                 LED_status = 1 - LED_status
                 pins.digitalWritePin(LED_pin, LED_status)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Open)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Close)
                 basic.showIcon(IconNames.Angry)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Backward, 100)
-                basic.pause(1000)
+                basic.pause(200)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
 
                 break;
@@ -180,20 +186,56 @@ while (true) {
             case "MoveRight": // request 192.168.x.x/Happy
                 GET_success = true
                 LED_status = 1 - LED_status
+                led.toggle(1, 0)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Open)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Close)
+
                 pins.digitalWritePin(LED_pin, LED_status)
                 basic.showIcon(IconNames.Angry)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.LeftMotor, maqueenPlusV2.MyEnumDir.Forward, 100)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.RightMotor, maqueenPlusV2.MyEnumDir.Backward, 100)
-                basic.pause(1000)
+                basic.pause(200)
                 maqueenPlusV2.controlMotor(maqueenPlusV2.MyEnumMotor.AllMotor, maqueenPlusV2.MyEnumDir.Forward, 100)                
                 break;
             case "Stop":
                 maqueenPlusV2.controlMotorStop(maqueenPlusV2.MyEnumMotor.AllMotor)
                 GET_success = true
                 LED_status = 1 - LED_status
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.LeftLed, maqueenPlusV2.MyEnumSwitch.Close)
+                maqueenPlusV2.controlLED(maqueenPlusV2.MyEnumLed.RightLed, maqueenPlusV2.MyEnumSwitch.Close)
                 pins.digitalWritePin(LED_pin, LED_status)
                 basic.showIcon(IconNames.Angry)
                 break;
+            case "PlayMusic":
+
+                GET_success = true
+
+                LED_status = 1 - LED_status
+
+                pins.digitalWritePin(LED_pin, LED_status)
+
+                basic.showIcon(IconNames.Angry)
+
+                playSouthAfricaNationalAnthem();
+
+                break;
+
+            case "StopMusic":
+
+                maqueenPlusV2.controlMotorStop(maqueenPlusV2.MyEnumMotor.AllMotor)
+
+                GET_success = true
+
+                LED_status = 1 - LED_status
+
+                pins.digitalWritePin(LED_pin, LED_status)
+
+                basic.showIcon(IconNames.Angry)
+
+                music.stopAllSounds()
+
+                break;
+            
 
         }
 // output HTML
@@ -207,4 +249,107 @@ serial_str = ""
 function sendAT(command: string, waitTime: number = 100) {
     serial.writeString(command + "\u000D\u000A")
     basic.pause(waitTime)
+}
+function playSouthAfricaNationalAnthem() {
+
+    // Define the notes and their durations for "Nkosi Sikelel' iAfrika"
+
+    let notes = [
+
+        330, 392, 440, 523, 587, 523, 440, 392, // Part 1
+
+        330, 330, 349, 392, 349, 330, 294, 294, // Part 2
+
+        523, 587, 659, 784, 659, 587, 523, 392, // Part 3
+
+        349, 392, 440, 523, 440, 392, 349, 294, // Part 4
+
+        523, 659, 784, 880, 784, 659, 523, 392, // Part 5
+
+        330, 392, 440, 523, 587, 523, 440, 392, // Part 6
+
+    ];
+
+
+
+    let durations = [
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Half),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Half),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Half),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Quarter),
+
+        music.beat(BeatFraction.Half),
+
+    ];
+
+
+
+    // Play the South Africa national anthem
+
+    for (let i = 0; i < notes.length; i++) {
+
+        music.playTone(notes[i], durations[i]);
+
+        basic.pause(durations[i]);
+
+    }
+
 }
